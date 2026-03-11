@@ -5,6 +5,8 @@ public class InteractableButton : MonoBehaviour
     public float pressDistance = 0.05f;
     public float pressSpeed = 5f;
     public Color pressedColor = Color.black;
+    public Color lockedColor = Color.red;
+    public bool requiresKey = true;
 
     private Vector3 originalPos;
     private Vector3 pressedPos;
@@ -47,6 +49,13 @@ public class InteractableButton : MonoBehaviour
         }
     }
 
+    public bool CanPress(GameObject player)
+    {
+        if (!requiresKey) return true;
+        PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+        return inventory != null && inventory.hasKey;
+    }
+
     public void Press()
     {
         if (!isPressed && !returning)
@@ -55,5 +64,18 @@ public class InteractableButton : MonoBehaviour
             rend.material.color = pressedColor;
             Debug.Log("Button pressed!");
         }
+    }
+
+    public void DenyPress()
+    {
+        // Flash red briefly to show it's locked
+        rend.material.color = lockedColor;
+        Invoke("ResetColor", 0.3f);
+        Debug.Log("Need a key!");
+    }
+
+    private void ResetColor()
+    {
+        rend.material.color = originalColor;
     }
 }
