@@ -3,8 +3,8 @@ using UnityEngine;
 public class Crosshair : MonoBehaviour
 {
     public float dotSize = 4f;
-    public float hoverDotSize = 10f;
-    public float interactRange = 3f;
+    public float hoverDotSize = 7f;
+    public float interactRange = 2f;
     private Texture2D dotTexture;
     private bool hovering = false;
 
