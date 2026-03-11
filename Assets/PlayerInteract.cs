@@ -6,7 +6,7 @@ public class PlayerInteract : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)) // Right click
+        if (Input.GetMouseButtonDown(0)) // Right click
         {
             Ray ray = new Ray(transform.position, transform.forward);
             RaycastHit hit;
