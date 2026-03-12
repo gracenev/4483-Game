@@ -3,7 +3,7 @@ using UnityEngine;
 public class Crosshair : MonoBehaviour
 {
     public float dotSize = 4f;
-    public float hoverDotSize = 7f;
+    public float hoverDotSize = 10f;
     public float interactRange = 2f;
     private Texture2D dotTexture;
     private bool hovering = false;
@@ -22,7 +22,8 @@ public class Crosshair : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, interactRange))
         {
-            hovering = hit.collider.GetComponent<InteractableButton>() != null;
+            hovering = hit.collider.GetComponent<InteractableButton>() != null
+                    || hit.collider.GetComponent<PickupKey>() != null;
         }
         else
         {
