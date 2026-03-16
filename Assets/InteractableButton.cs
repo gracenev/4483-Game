@@ -1,25 +1,37 @@
 using UnityEngine;
+using System;
 
+/// <summary>
+/// Original InteractableButton — extended with an OnPressedCallback event
+/// so ElevatorController (and anything else) can subscribe to button presses
+/// without polling or modifying this script further.
+/// </summary>
 public class InteractableButton : MonoBehaviour
 {
     public float pressDistance = 0.05f;
-    public float pressSpeed = 5f;
-    public Color pressedColor = Color.black;
-    public Color lockedColor = Color.red;
-    public bool requiresKey = true;
+    public float pressSpeed    = 5f;
+    public Color pressedColor  = Color.black;
+    public Color lockedColor   = Color.red;
+    public bool  requiresKey   = true;
 
-    private Vector3 originalPos;
-    private Vector3 pressedPos;
-    private Color originalColor;
+    /// <summary>
+    /// Subscribe to this to be notified when the button is successfully pressed.
+    /// ElevatorController hooks in here automatically in Start().
+    /// </summary>
+    public event Action OnPressedCallback;
+
+    private Vector3  originalPos;
+    private Vector3  pressedPos;
+    private Color    originalColor;
     private Renderer rend;
-    private bool isPressed = false;
-    private bool returning = false;
+    private bool     isPressed  = false;
+    private bool     returning  = false;
 
     void Start()
     {
         originalPos = transform.localPosition;
-        pressedPos = originalPos + (Vector3.right * pressDistance);
-        rend = GetComponent<Renderer>();
+        pressedPos  = originalPos + (Vector3.right * pressDistance);
+        rend        = GetComponent<Renderer>();
         originalColor = rend.material.color;
     }
 
@@ -27,7 +39,8 @@ public class InteractableButton : MonoBehaviour
     {
         if (isPressed)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, pressedPos, Time.deltaTime * pressSpeed);
+            transform.localPosition = Vector3.Lerp(
+                transform.localPosition, pressedPos, Time.deltaTime * pressSpeed);
 
             if (Vector3.Distance(transform.localPosition, pressedPos) < 0.001f)
             {
@@ -37,14 +50,16 @@ public class InteractableButton : MonoBehaviour
         }
         else if (returning)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, originalPos, Time.deltaTime * pressSpeed);
-            rend.material.color = Color.Lerp(rend.material.color, originalColor, Time.deltaTime * pressSpeed);
+            transform.localPosition = Vector3.Lerp(
+                transform.localPosition, originalPos, Time.deltaTime * pressSpeed);
+            rend.material.color = Color.Lerp(
+                rend.material.color, originalColor, Time.deltaTime * pressSpeed);
 
             if (Vector3.Distance(transform.localPosition, originalPos) < 0.001f)
             {
                 transform.localPosition = originalPos;
-                rend.material.color = originalColor;
-                returning = false;
+                rend.material.color     = originalColor;
+                returning               = false;
             }
         }
     }
@@ -63,12 +78,12 @@ public class InteractableButton : MonoBehaviour
             isPressed = true;
             rend.material.color = pressedColor;
             Debug.Log("Button pressed!");
+            OnPressedCallback?.Invoke();   // ← notify subscribers
         }
     }
 
     public void DenyPress()
     {
-        // Flash red briefly to show it's locked
         rend.material.color = lockedColor;
         Invoke("ResetColor", 0.3f);
         Debug.Log("Need a key!");
