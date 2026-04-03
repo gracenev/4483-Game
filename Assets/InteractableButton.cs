@@ -20,6 +20,12 @@ public class InteractableButton : MonoBehaviour
     /// </summary>
     public event Action OnPressedCallback;
 
+    /// <summary>
+    /// Fires when the player tries to press the button but doesn't have the key.
+    /// LevelManager listens to this to spawn the key on first attempt.
+    /// </summary>
+    public event Action OnDeniedCallback;
+
     private Vector3  originalPos;
     private Vector3  pressedPos;
     private Color    originalColor;
@@ -87,6 +93,7 @@ public class InteractableButton : MonoBehaviour
         rend.material.color = lockedColor;
         Invoke("ResetColor", 0.3f);
         Debug.Log("Need a key!");
+        OnDeniedCallback?.Invoke();
     }
 
     private void ResetColor()
