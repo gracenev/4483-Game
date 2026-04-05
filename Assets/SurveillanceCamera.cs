@@ -1,111 +1,37 @@
 using UnityEngine;
 
 /// <summary>
-/// Fully self-contained surveillance camera — Squid Game style.
-/// Runs its own state machine. No other script needed at runtime.
-/// CameraSystemSpawner just places this component; delete the spawner
-/// after and this keeps working forever.
-///
-/// Cycle:
-///   FACING AWAY  (green — safe)
-///   → rotates 180° to face player
-///   → FACING PLAYER  (red — freeze)
-///   → rotates 180° back away
-///   → repeat
+/// Pure rotation component. CameraSync drives the state —
+/// this just smoothly rotates to whatever angle it's told.
 /// </summary>
 public class SurveillanceCamera : MonoBehaviour
 {
-    [Header("Rotation")]
-    public float rotateSpeed   = 400f;   // degrees per second
+    public float rotateSpeed = 400f;
 
-    [Header("Timing")]
-    public float greenDuration = 5f;     // seconds facing away (safe)
-    public float redDuration   = 3f;     // seconds facing player (freeze)
+    private float _targetAngle  = 0f;
+    private bool  _reachedTarget = true;
+    public  bool  ReachedTarget  => _reachedTarget;
 
-    // ── State ──────────────────────────────────────────────────────────────
-    public enum CamState { FacingAway, TurningToPlayer, FacingPlayer, TurningAway }
-    public CamState State { get; private set; } = CamState.FacingAway;
-
-    private const float AWAY_ANGLE   =   0f;
-    private const float PLAYER_ANGLE = 180f;
-
-    private float _targetAngle = AWAY_ANGLE;
-    private float _stateTimer  = 0f;
-
-    // ── Unity ──────────────────────────────────────────────────────────────
-    void Start()
+    public void SetTarget(float angle)
     {
-        EnterState(CamState.FacingAway);
+        _targetAngle  = angle;
+        _reachedTarget = false;
     }
 
     void Update()
-    {
-        RotateTick();
-        StateTick();
-    }
-
-    // ── Rotation ───────────────────────────────────────────────────────────
-    void RotateTick()
     {
         float current = transform.localEulerAngles.y;
         float delta   = Mathf.DeltaAngle(current, _targetAngle);
 
         if (Mathf.Abs(delta) < 0.5f)
         {
-            // Snap and mark arrived
             transform.localEulerAngles = new Vector3(
-                transform.localEulerAngles.x,
-                _targetAngle,
-                transform.localEulerAngles.z);
-            OnReachedTarget();
+                transform.localEulerAngles.x, _targetAngle, transform.localEulerAngles.z);
+            _reachedTarget = true;
             return;
         }
 
+        _reachedTarget = false;
         transform.Rotate(0f, Mathf.Sign(delta) * rotateSpeed * Time.deltaTime, 0f, Space.Self);
-    }
-
-    void OnReachedTarget()
-    {
-        if (State == CamState.TurningToPlayer)
-            EnterState(CamState.FacingPlayer);
-        else if (State == CamState.TurningAway)
-            EnterState(CamState.FacingAway);
-    }
-
-    // ── State machine ──────────────────────────────────────────────────────
-    void StateTick()
-    {
-        _stateTimer -= Time.deltaTime;
-
-        if (State == CamState.FacingAway && _stateTimer <= 0f)
-            EnterState(CamState.TurningToPlayer);
-        else if (State == CamState.FacingPlayer && _stateTimer <= 0f)
-            EnterState(CamState.TurningAway);
-    }
-
-    void EnterState(CamState next)
-    {
-        State = next;
-
-        switch (next)
-        {
-            case CamState.FacingAway:
-                _targetAngle = AWAY_ANGLE;
-                _stateTimer  = greenDuration;
-                break;
-
-            case CamState.TurningToPlayer:
-                _targetAngle = PLAYER_ANGLE;
-                break;
-
-            case CamState.FacingPlayer:
-                _targetAngle = PLAYER_ANGLE;
-                _stateTimer  = redDuration;
-                break;
-
-            case CamState.TurningAway:
-                _targetAngle = AWAY_ANGLE;
-                break;
-        }
     }
 }

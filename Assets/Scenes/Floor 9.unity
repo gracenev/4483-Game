@@ -13421,7 +13421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeEffect
   maxSmokeAlpha: 1
-  smokeDuration: 80
+  smokeDuration: 65
   pulseAmount: 0.04
   pulseSpeed: 0.4
   fadeToBlackDuration: 1.5

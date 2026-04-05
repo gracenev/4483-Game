@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,9 @@ public class SmokeEffect : MonoBehaviour
     private Image     _overlay;
     private Coroutine _smokeCoroutine;
     private bool      _active;
+
+    /// <summary>Fires when smoke duration runs out (player consumed by smoke).</summary>
+    public event Action OnSmokeTimeout;
 
     void Awake()
     {
@@ -95,6 +99,13 @@ public class SmokeEffect : MonoBehaviour
             c.a             = Mathf.Clamp01(baseAlpha + pulse);
             _overlay.color  = c;
             yield return null;
+        }
+
+        // If we exited because time ran out (not because StopSmoke was called)
+        if (_active)
+        {
+            _active = false;
+            OnSmokeTimeout?.Invoke();
         }
     }
 }

@@ -1,5 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 /// <summary>
 /// Full level flow manager for Floor 9:
@@ -34,6 +37,11 @@ public class LevelManager : MonoBehaviour
     public CaptionUI   captionUI;
     public SmokeEffect smokeEffect;
 
+    // ── Built at runtime ───────────────────────────────────────────────────
+    private Image      _fadeOverlay;
+    private TMP_Text   _failText;
+    private CanvasGroup _failGroup;
+
     // ── Room data ──────────────────────────────────────────────────────────
     private static readonly Vector3[] AllRooms = new Vector3[]
     {
@@ -66,20 +74,39 @@ public class LevelManager : MonoBehaviour
     // ── Unity ──────────────────────────────────────────────────────────────
     void Start()
     {
+        // Auto-find everything if not assigned in Inspector
+        if (captionUI   == null) captionUI   = FindAnyObjectByType<CaptionUI>();
+        if (smokeEffect == null) smokeEffect = FindAnyObjectByType<SmokeEffect>();
+
+        if (lockedButton == null)
+        {
+            GameObject go = GameObject.Find("Button_Call");
+            if (go != null) lockedButton = go.GetComponent<InteractableButton>();
+        }
+        if (closeButton == null)
+        {
+            GameObject go = GameObject.Find("Button_Close");
+            if (go != null) closeButton = go.GetComponent<InteractableButton>();
+        }
+        if (keyObject == null)
+        {
+            keyObject = GameObject.Find("Key");
+            if (keyObject == null) keyObject = GameObject.FindGameObjectWithTag("Key");
+        }
+
+        if (captionUI    == null) Debug.LogWarning("[LevelManager] CaptionUI not found!");
+        if (smokeEffect  == null) Debug.LogWarning("[LevelManager] SmokeEffect not found!");
+        if (lockedButton == null) Debug.LogWarning("[LevelManager] Button_Call not found!");
+        if (closeButton  == null) Debug.LogWarning("[LevelManager] Button_Close not found!");
+        if (keyObject    == null) Debug.LogWarning("[LevelManager] Key object not found!");
+
         if (keyObject != null) keyObject.SetActive(false);
 
-        // Hook buttons
-        if (lockedButton != null)
-            lockedButton.OnDeniedCallback += OnLockedButtonPressed;
-        else
-            Debug.LogWarning("[LevelManager] Locked Button not assigned!");
+        if (lockedButton != null) lockedButton.OnDeniedCallback += OnLockedButtonPressed;
+        if (closeButton  != null) closeButton.OnPressedCallback += OnLevelComplete;
+        if (smokeEffect  != null) smokeEffect.OnSmokeTimeout    += OnSmokeTimeout;
 
-        if (closeButton != null)
-            closeButton.OnPressedCallback += OnLevelComplete;
-        else
-            Debug.LogWarning("[LevelManager] Close Button not assigned!");
-
-        // Start level — show opening caption + begin smoke
+        BuildFailOverlay();
         StartCoroutine(LevelStart());
     }
 
@@ -87,6 +114,7 @@ public class LevelManager : MonoBehaviour
     {
         if (lockedButton != null) lockedButton.OnDeniedCallback -= OnLockedButtonPressed;
         if (closeButton  != null) closeButton.OnPressedCallback -= OnLevelComplete;
+        if (smokeEffect  != null) smokeEffect.OnSmokeTimeout    -= OnSmokeTimeout;
     }
 
     // ── Level start ────────────────────────────────────────────────────────
@@ -138,7 +166,7 @@ public class LevelManager : MonoBehaviour
         Vector3[] rooms = (Vector3[])AllRooms.Clone();
         for (int i = rooms.Length - 1; i > 0; i--)
         {
-            int j = Random.Range(0, i + 1);
+            int j = UnityEngine.Random.Range(0, i + 1);
             (rooms[i], rooms[j]) = (rooms[j], rooms[i]);
         }
 
@@ -204,6 +232,78 @@ public class LevelManager : MonoBehaviour
 
         // TODO: swap in your rolling-screen transition here, e.g.:
         // UnityEngine.SceneManagement.SceneManager.LoadScene("Floor_8");
+    }
+
+    // ── Smoke timeout — player consumed ───────────────────────────────────
+    void OnSmokeTimeout()
+    {
+        if (_levelEnded) return;
+        _levelEnded = true;
+        StartCoroutine(SmokeFailSequence());
+    }
+
+    IEnumerator SmokeFailSequence()
+    {
+        // Finish fading to full black
+        if (smokeEffect != null)
+            yield return StartCoroutine(smokeEffect.FadeToBlack());
+        else
+            yield return new WaitForSeconds(1.5f);
+
+        // Show fail message over black screen
+        _failGroup.alpha = 1f;
+        _failText.text   = "You were consumed by the smoke...\n<size=24>Press Spacebar to try again</size>";
+
+        // Wait for spacebar
+        while (!Input.GetKeyDown(KeyCode.Space))
+            yield return null;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    // ── Build fail overlay canvas ──────────────────────────────────────────
+    void BuildFailOverlay()
+    {
+        Texture2D tex = new Texture2D(1, 1);
+        tex.SetPixel(0, 0, Color.white);
+        tex.Apply();
+        Sprite white = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+
+        GameObject cGO   = new GameObject("Floor9FailCanvas");
+        Canvas canvas    = cGO.AddComponent<Canvas>();
+        canvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 201;
+        CanvasScaler scaler = cGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        cGO.AddComponent<GraphicRaycaster>();
+
+        // Fail panel
+        GameObject failGO  = new GameObject("FailPanel");
+        failGO.transform.SetParent(cGO.transform, false);
+        Image failBg       = failGO.AddComponent<Image>();
+        failBg.sprite      = white;
+        failBg.color       = new Color(0f, 0f, 0f, 0f);
+        failBg.raycastTarget = false;
+        _failGroup             = failGO.AddComponent<CanvasGroup>();
+        _failGroup.alpha       = 0f;
+        _failGroup.blocksRaycasts = false;
+        RectTransform fp = failGO.GetComponent<RectTransform>();
+        fp.anchorMin = Vector2.zero; fp.anchorMax = Vector2.one;
+        fp.offsetMin = Vector2.zero; fp.offsetMax = Vector2.zero;
+
+        // Fail text
+        GameObject textGO  = new GameObject("FailText");
+        textGO.transform.SetParent(failGO.transform, false);
+        _failText            = textGO.AddComponent<TextMeshProUGUI>();
+        _failText.fontSize   = 52;
+        _failText.color      = new Color(0.9f, 0.5f, 0.1f);  // smoky orange
+        _failText.alignment  = TextAlignmentOptions.Center;
+        _failText.fontStyle  = FontStyles.Bold;
+        _failText.text       = "";
+        RectTransform tr = textGO.GetComponent<RectTransform>();
+        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
+        tr.offsetMin = Vector2.zero; tr.offsetMax = Vector2.zero;
     }
 
     // ── Public helpers ─────────────────────────────────────────────────────
