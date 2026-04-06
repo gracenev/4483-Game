@@ -70,7 +70,7 @@ public class PickupKey : MonoBehaviour
         PlayerInventory inv = player.GetComponent<PlayerInventory>();
         if (inv != null) inv.hasKey = true;
 
-        LevelManager lm = FindObjectOfType<LevelManager>();
+        LevelManager lm = FindAnyObjectByType<LevelManager>();
         if (lm != null)
             lm.OnKeyPickedUp();
         else

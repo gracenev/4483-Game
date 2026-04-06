@@ -31,7 +31,7 @@ public class CameraSync : MonoBehaviour
 
     void Start()
     {
-        _cams = FindObjectsOfType<SurveillanceCamera>();
+        _cams = FindObjectsByType<SurveillanceCamera>(FindObjectsSortMode.None);
         if (_cams.Length == 0)
             Debug.LogWarning("[CameraSync] No SurveillanceCameras found!");
 

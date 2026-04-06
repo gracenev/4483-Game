@@ -18,12 +18,12 @@ public class RedLightEffect : MonoBehaviour
 
     void Start()
     {
-        _sync = FindObjectOfType<CameraSync>();
+        _sync = FindAnyObjectByType<CameraSync>();
         if (_sync == null)
             Debug.LogWarning("[RedLightEffect] CameraSync not found!");
 
         var lights = new List<Light>();
-        foreach (Light lt in FindObjectsOfType<Light>())
+        foreach (Light lt in FindObjectsByType<Light>(FindObjectsSortMode.None))
             if (lt.type == LightType.Point)
                 lights.Add(lt);
         _lights = lights.ToArray();

@@ -40,7 +40,7 @@ public class Floor2LevelManager : MonoBehaviour
     // ── Unity ──────────────────────────────────────────────────────────────
     void Start()
     {
-        _sync  = FindObjectOfType<CameraSync>();
+        _sync  = FindAnyObjectByType<CameraSync>();
         _audio = GetComponent<AudioSource>();
         _audio.playOnAwake  = false;
         _audio.spatialBlend = 0f;

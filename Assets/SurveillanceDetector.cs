@@ -24,11 +24,11 @@ public class SurveillanceDetector : MonoBehaviour
 
     void Start()
     {
-        _sync = FindObjectOfType<CameraSync>();
+        _sync = FindAnyObjectByType<CameraSync>();
 
         // Auto-find LevelManager if not assigned in Inspector
         if (levelManager == null)
-            levelManager = FindObjectOfType<Floor2LevelManager>();
+            levelManager = FindAnyObjectByType<Floor2LevelManager>();
         if (levelManager == null)
             Debug.LogWarning("[SurveillanceDetector] Floor2LevelManager not found!");
 
