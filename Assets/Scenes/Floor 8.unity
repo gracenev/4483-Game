@@ -48176,6 +48176,7 @@ MonoBehaviour:
   closeButton: {fileID: 941300968}
   cameraTurnSound: {fileID: 8300000, guid: fdd63cf36c5a0be428df5675a7b382cf, type: 3}
   fadeSpeed: 1.5
+  targetScene: Assets/Scenes/Floor 9.unity
 --- !u!82 &2125246832
 AudioSource:
   m_ObjectHideFlags: 0

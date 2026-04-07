@@ -20,6 +20,10 @@ public class Floor2LevelManager : MonoBehaviour
     [Header("Buttons")]
     public InteractableButton closeButton;
 
+    [Header("Scene Transition")]
+    [Tooltip("Full asset path of the scene to load, e.g. Assets/Scenes/Floor 9.unity")]
+    public string targetScene;
+
     [Header("Audio")]
     public AudioClip cameraTurnSound;
 
@@ -98,8 +102,10 @@ public class Floor2LevelManager : MonoBehaviour
     IEnumerator LevelCompleteSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("[Floor2LevelManager] Level complete — ready for next scene.");
-        // TODO: SceneManager.LoadScene("Floor_1");
+        if (!string.IsNullOrEmpty(targetScene))
+            SceneManager.LoadScene(targetScene);
+        else
+            Debug.LogWarning("[Floor2LevelManager] targetScene is not set — assign it in the Inspector.");
     }
 
     // ── Fail (called by SurveillanceDetector) ─────────────────────────────

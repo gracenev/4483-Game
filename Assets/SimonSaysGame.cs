@@ -64,6 +64,7 @@ public class SimonSaysGame : MonoBehaviour
     private Image            _failOverlay;
     private CanvasGroup _failGroup;
     private TMP_Text         _failText;
+    private ElevatorButton   _elevatorButton;
 
     // ──────────────────────────────────────────────────────────────────────
     void Start()
@@ -88,7 +89,16 @@ public class SimonSaysGame : MonoBehaviour
 
         // Hook close button for level end
         if (closeButton != null)
+        {
+            // Gate via game completion, not a key
+            closeButton.requiresKey = false;
             closeButton.OnPressedCallback += OnLevelComplete;
+
+            // Lock the ElevatorButton so the scene cannot load until the game is complete
+            _elevatorButton = closeButton.GetComponent<ElevatorButton>();
+            if (_elevatorButton != null)
+                _elevatorButton.locked = true;
+        }
 
         BuildUI();
         StartCoroutine(OpeningSequence());
@@ -262,6 +272,10 @@ public class SimonSaysGame : MonoBehaviour
                 r.enabled = false;
         }
 
+        // Unlock the elevator button now that the game is complete
+        if (_elevatorButton != null)
+            _elevatorButton.locked = false;
+
         Debug.Log("[SimonSays] All rounds complete — press Button_Close to proceed.");
     }
 
@@ -275,8 +289,7 @@ public class SimonSaysGame : MonoBehaviour
     IEnumerator FadeOutSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("[SimonSays] Level complete — ready for next scene.");
-        // TODO: SceneManager.LoadScene("Floor_6");
+        // ElevatorButton handles the actual scene load after its own delay
     }
 
     IEnumerator FadeToBlack()

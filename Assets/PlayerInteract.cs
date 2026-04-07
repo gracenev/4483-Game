@@ -46,6 +46,11 @@ public class PlayerInteract : MonoBehaviour
                 FuseBoxInteractable fuse = hit.collider.GetComponent<FuseBoxInteractable>();
                 if (fuse != null)
                     fuse.Interact();
+
+                // ── Elevator Button (scene transition) ─────────────────────
+                ElevatorButton elevatorButton = hit.collider.GetComponent<ElevatorButton>();
+                if (elevatorButton != null)
+                    elevatorButton.Press();
             }
         }
     }
