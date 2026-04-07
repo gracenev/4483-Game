@@ -4659,6 +4659,7 @@ GameObject:
   - component: {fileID: 2079088415}
   - component: {fileID: 2079088414}
   - component: {fileID: 2079088419}
+  - component: {fileID: 2079088420}
   m_Layer: 0
   m_Name: Button_Close
   m_TagString: Untagged
@@ -4680,7 +4681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableButton
   pressDistance: 0.05
   pressSpeed: 5
-  pressedColor: {r: 0.29283494, g: 0.9019608, b: 0.19999999, a: 1}
+  pressedColor: {r: 0.9019608, g: 0.19999999, b: 0.42121643, a: 1}
   lockedColor: {r: 1, g: 0, b: 0, a: 1}
   requiresKey: 1
 --- !u!23 &2079088415
@@ -4787,6 +4788,23 @@ MonoBehaviour:
   targetScene: Assets/Scenes/Floor 8.unity
   loadDelay: 1.46
   successColor: {r: 0, g: 1, b: 0, a: 1}
+  locked: 0
+--- !u!114 &2079088420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079088413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cc0046fdff6c484f84a25f6986dcdb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  titleText: 
+  holdDuration: 3
+  fadeInDuration: 0.5
+  fadeOutDuration: 0.8
 --- !u!21 &2083902543
 Material:
   serializedVersion: 8
