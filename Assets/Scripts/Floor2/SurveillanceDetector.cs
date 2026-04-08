@@ -53,14 +53,14 @@ public class SurveillanceDetector : MonoBehaviour
         bool isRed = _sync.State == CameraSync.CamState.FacingPlayer ||
                      _sync.State == CameraSync.CamState.TurningToPlayer;
 
-        // Cameras just turned toward the player — freeze them and start the grace period
+        // Cameras just turned toward the player - freeze them and start the grace period
         if (isRed && !_redActive)
         {
             _redActive  = true;
             _graceTimer = gracePeriod;
             FreezePlayer(true);
         }
-        // Cameras turned away — let the player move again
+        // Cameras turned away - let the player move again
         else if (!isRed && _redActive)
         {
             _redActive = false;
@@ -77,7 +77,7 @@ public class SurveillanceDetector : MonoBehaviour
                 return;
             }
 
-            // Check if the player moved — if they did, they're caught
+            // Check if the player moved - if they did, they're caught
             float moved = Vector3.Distance(playerObject.transform.position, _lastPosition);
             if (moved > movementThreshold * Time.deltaTime)
             {
@@ -88,7 +88,7 @@ public class SurveillanceDetector : MonoBehaviour
                 if (levelManager != null)
                     levelManager.TriggerFail();
                 else
-                    Debug.LogError("SurveillanceDetector: Floor2LevelManager is null — make sure it's assigned.");
+                    Debug.LogError("SurveillanceDetector: Floor2LevelManager is null - make sure it's assigned.");
                 return;
             }
         }

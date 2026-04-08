@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Handles all player interactions — buttons, keys, wires, and the fuse box.
+// Handles all player interactions - buttons, keys, wires, and the fuse box.
 // Shoots a raycast forward from the camera when the player clicks
 // and checks what they're looking at.
 public class PlayerInteract : MonoBehaviour

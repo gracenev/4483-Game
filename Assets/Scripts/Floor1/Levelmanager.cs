@@ -9,9 +9,9 @@ using TMPro;
 public class LevelManager : MonoBehaviour
 {
     [Header("Buttons")]
-    [Tooltip("The elevator call button — locked at first, triggers the key spawn when denied")]
+    [Tooltip("The elevator call button - locked at first, triggers the key spawn when denied")]
     public InteractableButton lockedButton;
-    [Tooltip("The close button inside the elevator — pressing this ends the level")]
+    [Tooltip("The close button inside the elevator - pressing this ends the level")]
     public InteractableButton closeButton;
 
     [Header("Key")]
@@ -108,7 +108,7 @@ public class LevelManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        // Start the smoke right away — it builds up over about 2 minutes
+        // Start the smoke right away - it builds up over about 2 minutes
         if (smokeEffect != null)
             smokeEffect.StartSmoke();
 
@@ -193,7 +193,7 @@ public class LevelManager : MonoBehaviour
             captionUI.Show("Found it! I need to get to the elevator now.", 4f);
     }
 
-    // Player pressed Button_Close — level is done
+    // Player pressed Button_Close - level is done
     public void OnLevelComplete()
     {
         if (_levelEnded) return;
@@ -208,13 +208,11 @@ public class LevelManager : MonoBehaviour
         else
             yield return new WaitForSeconds(1.5f);
 
-        Debug.Log("Floor 9 complete — ready to move to the next scene.");
-
-        // TODO: load next floor here
-        // SceneManager.LoadScene("Floor_8");
+        Debug.Log("Floor 9 complete - loading Floor 8.");
+        SceneManager.LoadScene("Floor 8");
     }
 
-    // Smoke ran out — player didn't make it in time
+    // Smoke ran out - player didn't make it in time
     void OnSmokeTimeout()
     {
         if (_levelEnded) return;
@@ -239,7 +237,7 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // Builds the fail screen canvas in code — shows up when the player loses
+    // Builds the fail screen canvas in code - shows up when the player loses
     void BuildFailOverlay()
     {
         Texture2D tex = new Texture2D(1, 1);
@@ -273,7 +271,7 @@ public class LevelManager : MonoBehaviour
         textGO.transform.SetParent(failGO.transform, false);
         _failText            = textGO.AddComponent<TextMeshProUGUI>();
         _failText.fontSize   = 52;
-        _failText.color      = new Color(0.9f, 0.5f, 0.1f);  // smoky orange
+        _failText.color      = new Color(0.9f, 0.5f, 0.1f);
         _failText.alignment  = TextAlignmentOptions.Center;
         _failText.fontStyle  = FontStyles.Bold;
         _failText.text       = "";

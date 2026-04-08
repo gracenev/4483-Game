@@ -25,7 +25,7 @@ public class SimonSaysGame : MonoBehaviour
 
     [Header("References")]
     public InteractableButton closeButton;
-    [Tooltip("The key object — gets made invisible once the circuit is fixed")]
+    [Tooltip("The key object - gets made invisible once the circuit is fixed")]
     public GameObject keyObject;
 
     [Header("Audio")]
@@ -131,8 +131,8 @@ public class SimonSaysGame : MonoBehaviour
         for (int i = 0; i < seqLength; i++)
             _sequence.Add(UnityEngine.Random.Range(0, 6));
 
-        SetHint($"ROUND {_currentRound} / {totalRounds} — MEMORIZE THE SEQUENCE");
-        _caption?.Show($"Round {_currentRound} of {totalRounds} — watch carefully!", 2f);
+        SetHint($"ROUND {_currentRound} / {totalRounds} - MEMORIZE THE SEQUENCE");
+        _caption?.Show($"Round {_currentRound} of {totalRounds} - watch carefully!", 2f);
 
         StartCoroutine(ShowSequence());
     }
@@ -188,16 +188,16 @@ public class SimonSaysGame : MonoBehaviour
 
             if (_attemptsLeft <= 0)
             {
-                // Out of attempts — restart the whole level
+                // Out of attempts - restart the whole level
                 _playerCanInput = false;
                 _caption?.Show("Circuit overloaded! Restarting sequence...", 2f);
                 StartCoroutine(RestartRound());
             }
             else
             {
-                // Still have attempts left — replay the sequence so they can try again
+                // Still have attempts left - replay the sequence so they can try again
                 _inputIndex = 0;
-                SetHint($"WRONG! Starting over — ATTEMPTS: {_attemptsLeft}");
+                SetHint($"WRONG! Starting over - ATTEMPTS: {_attemptsLeft}");
                 StartCoroutine(ReplayAfterError());
             }
         }
@@ -209,7 +209,7 @@ public class SimonSaysGame : MonoBehaviour
         StartNextRound();
     }
 
-    // No attempts left — fade to black and show the fail screen
+    // No attempts left - fade to black and show the fail screen
     IEnumerator RestartRound()
     {
         yield return new WaitForSeconds(1f);
@@ -224,7 +224,7 @@ public class SimonSaysGame : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // Wrong press — show the sequence again before the player retries
+    // Wrong press - show the sequence again before the player retries
     IEnumerator ReplayAfterError()
     {
         _playerCanInput = false;
@@ -232,7 +232,7 @@ public class SimonSaysGame : MonoBehaviour
         StartCoroutine(ShowSequence());
     }
 
-    // All 3 rounds done — circuit is fixed
+    // All 3 rounds done - circuit is fixed
     void OnAllRoundsComplete()
     {
         _gameComplete = true;
@@ -240,7 +240,7 @@ public class SimonSaysGame : MonoBehaviour
         _caption?.Show("Circuit restored! The elevator is operational.", 3f);
         SetHint("CIRCUIT RESTORED");
 
-        // Make the key active but invisible — player just needs to press Button_Close
+        // Make the key active but invisible - player just needs to press Button_Close
         if (keyObject != null)
         {
             keyObject.SetActive(true);
@@ -248,10 +248,10 @@ public class SimonSaysGame : MonoBehaviour
                 r.enabled = false;
         }
 
-        Debug.Log("All rounds complete — press Button_Close to leave.");
+        Debug.Log("All rounds complete - press Button_Close to leave.");
     }
 
-    // Button_Close was pressed — fade out and finish the level
+    // Button_Close was pressed - fade out and finish the level
     void OnLevelComplete()
     {
         if (!_gameComplete) return;
@@ -261,7 +261,7 @@ public class SimonSaysGame : MonoBehaviour
     IEnumerator FadeOutSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("Floor 3 complete — ready for the next scene.");
+        Debug.Log("Floor 3 complete - ready for the next scene.");
         // TODO: SceneManager.LoadScene("Floor_6");
     }
 
@@ -283,7 +283,7 @@ public class SimonSaysGame : MonoBehaviour
         if (_hintText != null) _hintText.text = text;
     }
 
-    // Builds all the UI elements in code — no manual Canvas setup needed
+    // Builds all the UI elements in code - no manual Canvas setup needed
     void BuildUI()
     {
         Texture2D tex = new Texture2D(1, 1);
@@ -330,7 +330,7 @@ public class SimonSaysGame : MonoBehaviour
         hrt.offsetMin = Vector2.zero;
         hrt.offsetMax = Vector2.zero;
 
-        // Fail panel — hidden until the player runs out of attempts
+        // Fail panel - hidden until the player runs out of attempts
         GameObject failGO    = new GameObject("FailPanel");
         failGO.transform.SetParent(cGO.transform, false);
         Image failBg         = failGO.AddComponent<Image>();

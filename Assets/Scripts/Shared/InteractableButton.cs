@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 
 // A physical button that the player can press in the world.
-// Has two events other scripts can listen to — one for a successful press
+// Has two events other scripts can listen to - one for a successful press
 // and one for when the player tries to press it without a key.
 public class InteractableButton : MonoBehaviour
 {
@@ -16,7 +16,7 @@ public class InteractableButton : MonoBehaviour
     public event Action OnPressedCallback;
 
     // Fires when the player tries to press it but doesn't have the key
-    // — the LevelManager listens to this to trigger the key spawn
+    // - the LevelManager listens to this to trigger the key spawn
     public event Action OnDeniedCallback;
 
     private Vector3  originalPos;

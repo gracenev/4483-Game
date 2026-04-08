@@ -39,7 +39,7 @@ public class WireButton : MonoBehaviour
             game.OnWirePressed(wireIndex);
     }
 
-    // Flashes the wire white — used both when the sequence is shown and when the player gets it right
+    // Flashes the wire white - used both when the sequence is shown and when the player gets it right
     public void FlashGlow(float duration = 0.3f)
     {
         _glowing           = true;

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Caption system for Floor 3 — same idea as CaptionUI and CaptionUI2
+// Caption system for Floor 3 - same idea as CaptionUI and CaptionUI2
 // but kept separate so it doesn't conflict with the other floors.
 public class CaptionUI3 : MonoBehaviour
 {

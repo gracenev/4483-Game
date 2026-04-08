@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Handles the physical rotation of a single surveillance camera.
-// CameraSync tells it where to rotate — this script just handles the smooth movement.
+// CameraSync tells it where to rotate - this script just handles the smooth movement.
 public class SurveillanceCamera : MonoBehaviour
 {
     public float rotateSpeed = 400f;
@@ -24,7 +24,7 @@ public class SurveillanceCamera : MonoBehaviour
         float current = transform.localEulerAngles.y;
         float delta   = Mathf.DeltaAngle(current, _targetAngle);
 
-        // Close enough — snap to the target and mark as done
+        // Close enough - snap to the target and mark as done
         if (Mathf.Abs(delta) < 0.5f)
         {
             transform.localEulerAngles = new Vector3(
@@ -33,7 +33,7 @@ public class SurveillanceCamera : MonoBehaviour
             return;
         }
 
-        // Still rotating — move toward the target this frame
+        // Still rotating - move toward the target this frame
         _reachedTarget = false;
         transform.Rotate(0f, Mathf.Sign(delta) * rotateSpeed * Time.deltaTime, 0f, Space.Self);
     }

@@ -37,7 +37,7 @@ public class ElevatorController : MonoBehaviour
     {
         if (leftDoor == null || rightDoor == null)
         {
-            Debug.LogError("ElevatorController is missing a door reference — check the Inspector.", this);
+            Debug.LogError("ElevatorController is missing a door reference - check the Inspector.", this);
             return;
         }
 

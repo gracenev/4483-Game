@@ -62,7 +62,7 @@ public class Floor2LevelManager : MonoBehaviour
 
         CameraSync.CamState current = _sync.State;
 
-        // Only trigger the warning the moment the camera starts turning — not every frame
+        // Only trigger the warning the moment the camera starts turning - not every frame
         if (current == CameraSync.CamState.TurningToPlayer &&
             _lastState != CameraSync.CamState.TurningToPlayer)
         {
@@ -83,7 +83,7 @@ public class Floor2LevelManager : MonoBehaviour
             "I need to time this perfectly.", 6f);
     }
 
-    // Player pressed the close button — level is done
+    // Player pressed the close button - level is done
     void OnLevelComplete()
     {
         if (_levelEnded) return;
@@ -94,7 +94,8 @@ public class Floor2LevelManager : MonoBehaviour
     IEnumerator LevelCompleteSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("Floor 2 complete — ready for the next scene.");
+        Debug.Log("Floor 2 complete - loading Floor 7.");
+        SceneManager.LoadScene("Floor 7");
     }
 
     // Called by SurveillanceDetector when the player gets caught moving
@@ -163,7 +164,7 @@ public class Floor2LevelManager : MonoBehaviour
         fr.offsetMin = Vector2.zero;
         fr.offsetMax = Vector2.zero;
 
-        // The fail panel — hidden until the player gets caught
+        // The fail panel - hidden until the player gets caught
         // Adding Image first so that RectTransform gets created automatically
         GameObject failGO = new GameObject("FailPanel");
         failGO.transform.SetParent(cGO.transform, false);

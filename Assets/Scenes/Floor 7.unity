@@ -3212,6 +3212,7 @@ GameObject:
   - component: {fileID: 1327820189}
   - component: {fileID: 1327820191}
   - component: {fileID: 1327820192}
+  - component: {fileID: 1327820193}
   m_Layer: 0
   m_Name: WirePanel_Root
   m_TagString: Untagged
@@ -3361,6 +3362,21 @@ MonoBehaviour:
   wrongSound: {fileID: 8300000, guid: 8afb5ea89e42fa746a1be48737339522, type: 3}
   successSound: {fileID: 8300000, guid: e726cb7488ed470498d00e6451d47d09, type: 3}
   fadeSpeed: 1.5
+--- !u!114 &1327820193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327820188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affeb3fef230cbe4b928b5655b3d7d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorTitle
+  floorName: Floor 7
+  holdDuration: 1.5
+  fadeDuration: 0.8
 --- !u!1 &1336871227
 GameObject:
   m_ObjectHideFlags: 0
