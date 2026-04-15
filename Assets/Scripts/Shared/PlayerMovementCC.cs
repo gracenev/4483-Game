@@ -1,8 +1,8 @@
 using UnityEngine;
 
 // Handles player movement using a CharacterController.
-// Includes a small ground buffer window so jumping still works
-// even if the player steps off a ledge a fraction of a second early.
+// Jumping works whether standing still or moving.
+// Slopes are handled properly using a SphereCast instead of a single raycast.
 public class PlayerMovementCC : MonoBehaviour
 {
     public float speed   = 5f;
@@ -21,11 +21,22 @@ public class PlayerMovementCC : MonoBehaviour
         cc = GetComponent<CharacterController>();
     }
 
-    // Uses both the CharacterController's built-in check and a raycast as a backup
+    // SphereCast covers slopes and stationary standing better than a single raycast
     bool IsGrounded()
     {
         if (cc.isGrounded) return true;
-        return Physics.Raycast(transform.position, Vector3.down, cc.height / 2f + 0.2f);
+
+        // SphereCast downward from the base of the controller
+        // Radius slightly smaller than the CC radius to avoid false positives on walls
+        float castRadius = cc.radius * 0.9f;
+        float castDist   = (cc.height * 0.5f) - cc.radius + 0.25f;
+
+        return Physics.SphereCast(
+            transform.position,
+            castRadius,
+            Vector3.down,
+            out _,
+            castDist);
     }
 
     void Update()
@@ -33,7 +44,10 @@ public class PlayerMovementCC : MonoBehaviour
         // Move the player based on WASD / arrow key input
         Vector3 move = transform.right   * Input.GetAxis("Horizontal")
                      + transform.forward * Input.GetAxis("Vertical");
-        cc.Move(move * speed * Time.deltaTime);
+
+        // Always push slightly downward so cc.isGrounded works even when standing still
+        Vector3 moveWithGrounding = move * speed + Vector3.down * 2f;
+        cc.Move(moveWithGrounding * Time.deltaTime);
 
         if (IsGrounded())
         {
@@ -48,7 +62,7 @@ public class PlayerMovementCC : MonoBehaviour
             groundBufferTimer -= Time.deltaTime;
         }
 
-        // Allow jumping within the buffer window
+        // Jump works whether moving or standing still
         if (Input.GetButtonDown("Jump") && groundBufferTimer > 0f)
         {
             velocity.y        = Mathf.Sqrt(jump * -2f * gravity);
@@ -57,6 +71,6 @@ public class PlayerMovementCC : MonoBehaviour
 
         // Apply gravity every frame
         velocity.y += gravity * Time.deltaTime;
-        cc.Move(velocity * Time.deltaTime);
+        cc.Move(new Vector3(0f, velocity.y, 0f) * Time.deltaTime);
     }
 }

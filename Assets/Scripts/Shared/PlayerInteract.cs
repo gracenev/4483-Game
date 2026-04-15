@@ -1,8 +1,5 @@
 using UnityEngine;
 
-// Handles all player interactions - buttons, keys, wires, and the fuse box.
-// Shoots a raycast forward from the camera when the player clicks
-// and checks what they're looking at.
 public class PlayerInteract : MonoBehaviour
 {
     public float interactRange = 2f;
@@ -16,7 +13,7 @@ public class PlayerInteract : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, interactRange))
             {
-                // Check if it's a button
+                // ── Interactable Button ────────────────────────────────────
                 InteractableButton button = hit.collider.GetComponent<InteractableButton>();
                 if (button != null)
                 {
@@ -27,7 +24,7 @@ public class PlayerInteract : MonoBehaviour
                         button.DenyPress();
                 }
 
-                // Check if it's a key on the ground
+                // ── Key pickup ─────────────────────────────────────────────
                 PickupKey key = hit.collider.GetComponent<PickupKey>();
                 if (key != null)
                 {
@@ -40,15 +37,20 @@ public class PlayerInteract : MonoBehaviour
                     }
                 }
 
-                // Check if it's one of the Simon Says wires
+                // ── Wire (Simon Says) ──────────────────────────────────────
                 WireButton wire = hit.collider.GetComponent<WireButton>();
                 if (wire != null)
                     wire.Press();
 
-                // Check if it's the fuse box that starts the circuit game
+                // ── Fuse Box (starts Simon Says game) ─────────────────────
                 FuseBoxInteractable fuse = hit.collider.GetComponent<FuseBoxInteractable>();
                 if (fuse != null)
                     fuse.Interact();
+
+                // ── Breaker Switch (Floor 5 puzzle) ───────────────────────
+                BreakerSwitch breaker = hit.collider.GetComponent<BreakerSwitch>();
+                if (breaker != null)
+                    breaker.Interact();
             }
         }
     }
