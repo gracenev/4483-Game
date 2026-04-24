@@ -19,7 +19,7 @@ public class Floor5LevelManager : MonoBehaviour
     public InteractableButton closeButton;
 
     [Header("Key")]
-    [Tooltip("Drag your key prefab/object here — will spawn at player position when solved")]
+    [Tooltip("Drag your Floor 5 key object here — name it 'Key_Floor5' in the scene so other managers don't touch it")]
     public GameObject keyObject;
 
     [Header("Environmental Feedback")]
@@ -108,10 +108,10 @@ public class Floor5LevelManager : MonoBehaviour
         if (closeButton != null) closeButton.OnPressedCallback -= OnLevelComplete;
     }
 
-    // ── Opening caption ────────────────────────────────────────────────────
+    // ── Opening caption — waits for floor title card to finish ─────────────
     IEnumerator OpeningSequence()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(5.5f);
         _caption?.Show("Finally... a normal looking floor. Maybe I can actually just take the elevator.", 5f);
     }
 
@@ -223,7 +223,7 @@ public class Floor5LevelManager : MonoBehaviour
     {
         yield return StartCoroutine(FadeToBlack());
         Debug.Log("Floor 5 complete.");
-        // TODO: SceneManager.LoadScene("Floor 6");
+        SceneManager.LoadScene("Floor 4");
     }
 
     IEnumerator FadeToBlack()

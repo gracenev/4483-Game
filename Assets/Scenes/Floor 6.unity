@@ -673,6 +673,7 @@ GameObject:
   - component: {fileID: 26326158}
   - component: {fileID: 26326159}
   - component: {fileID: 26326160}
+  - component: {fileID: 26326161}
   m_Layer: 0
   m_Name: Floor6
   m_TagString: Untagged
@@ -812,6 +813,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &26326161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26326157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affeb3fef230cbe4b928b5655b3d7d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorTitle
+  displayFloorNumber: Floor 3
+  floorName: Structural Collapse
+  floorDescription: The floor is giving way. Parkour across the debris to reach the
+    exit.
+  holdDuration: 5.5
+  fadeDuration: 0.8
 --- !u!1 &27317342
 GameObject:
   m_ObjectHideFlags: 0
@@ -40158,7 +40177,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotSize: 4
-  hoverDotSize: 7
+  hoverSize: 8
+  outlineThick: 2
   interactRange: 2
 --- !u!114 &1934305169
 MonoBehaviour:

@@ -103,10 +103,10 @@ public class LevelManager : MonoBehaviour
         if (smokeEffect  != null) smokeEffect.OnSmokeTimeout    -= OnSmokeTimeout;
     }
 
-    // Small delay before anything starts so the scene has time to fully load
+    // Wait for the floor title card to finish before starting captions
     IEnumerator LevelStart()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(5.5f);
 
         // Start the smoke right away - it builds up over about 2 minutes
         if (smokeEffect != null)

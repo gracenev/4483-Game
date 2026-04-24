@@ -5,28 +5,26 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-// Handles the full Simon Says circuit game on Floor 3.
-// The player watches a sequence of wires light up, then has to click them in the same order.
-// 3 rounds total, sequence gets longer each round.
-// Run out of attempts and the level restarts. Complete all rounds and the elevator works.
+// Handles the Simon Says circuit puzzle on Floor 4.
+// Player clicks the fuse box to start, watches wires flash in a sequence,
+// then repeats it back by clicking the wires in the correct order.
+// 4 rounds total, sequence gets longer each round.
 [RequireComponent(typeof(AudioSource))]
 public class SimonSaysGame : MonoBehaviour
 {
-    // Wire colour names used to find the wire GameObjects in the scene
     private static readonly string[] ColorNames = new string[]
     { "Red", "Blue", "Green", "Yellow", "Purple", "Orange" };
 
     [Header("Game Settings")]
-    public int   totalRounds    = 3;
-    public int   startingLength = 3;    // how many wires in the first round's sequence
-    public float showInterval   = 0.6f; // how long each wire glows when showing the sequence
-    public float showGap        = 0.2f; // pause between each glow
-    public int   maxAttempts    = 3;    // wrong presses before the round resets
+    public int   totalRounds       = 3;
+    public int   startingLength    = 3;   // Round 1 sequence length
+    public float showInterval      = 0.6f; // seconds each wire glows during show
+    public float showGap           = 0.2f; // gap between glows
+    public int   maxAttempts       = 3;
 
     [Header("References")]
     public InteractableButton closeButton;
-    [Tooltip("The key object - gets made invisible once the circuit is fixed")]
-    public GameObject keyObject;
+    public GameObject         keyObject;   // assign your key - will be set inactive+invisible
 
     [Header("Audio")]
     public AudioClip correctSound;
@@ -36,45 +34,46 @@ public class SimonSaysGame : MonoBehaviour
     [Header("Fade")]
     public float fadeSpeed = 1.5f;
 
-    // UI built at runtime
-    private CaptionUI3  _caption;
-    private Image       _fadeOverlay;
-    private TMP_Text    _hintText;    // status text at the top of the screen
-    private Image       _failOverlay;
-    private CanvasGroup _failGroup;
-    private TMP_Text    _failText;
+    // Built at runtime
+    private CaptionUI3   _caption;
+    private Image        _fadeOverlay;
+    private TMP_Text     _hintText;   // shows "INPUT: X / Y" and "MEMORIZE"
 
-    // Game state
-    private WireButton[] _wires;
-    private List<int>    _sequence       = new List<int>();
-    private int          _inputIndex     = 0;
-    private int          _currentRound   = 0;
-    private int          _attemptsLeft;
-    private bool         _playerCanInput = false;
-    private bool         _gameStarted    = false;
-    private bool         _gameComplete   = false;
-    private AudioSource  _audio;
+    // State
+    private WireButton[]     _wires;
+    private List<int>        _sequence      = new List<int>();
+    private int              _inputIndex    = 0;
+    private int              _currentRound  = 0;
+    private int              _attemptsLeft;
+    private bool             _playerCanInput = false;
+    private bool             _gameStarted    = false;
+    private bool             _gameComplete   = false;
+    private AudioSource      _audio;
+    private Image            _failOverlay;
+    private CanvasGroup _failGroup;
+    private TMP_Text         _failText;
 
     void Start()
     {
         _audio        = GetComponent<AudioSource>();
         _attemptsLeft = maxAttempts;
 
-        // Find each wire by name in the scene
+        // Auto-find wires
         _wires = new WireButton[6];
         for (int i = 0; i < 6; i++)
         {
-            string name   = $"Wire_{ColorNames[i]}";
+            string name = $"Wire_{ColorNames[i]}";
             GameObject go = GameObject.Find(name);
             if (go != null)
                 _wires[i] = go.GetComponent<WireButton>();
             else
-                Debug.LogWarning($"Couldn't find wire GameObject named: {name}");
+                Debug.LogWarning($"[SimonSays] Wire not found: {name}");
         }
 
-        // Keep the key hidden until the game is complete
+        // Hide key
         if (keyObject != null) keyObject.SetActive(false);
 
+        // Hook close button for level end
         if (closeButton != null)
             closeButton.OnPressedCallback += OnLevelComplete;
 
@@ -88,16 +87,16 @@ public class SimonSaysGame : MonoBehaviour
             closeButton.OnPressedCallback -= OnLevelComplete;
     }
 
-    // Opening captions that play when the scene starts
+    // Opening captions
     IEnumerator OpeningSequence()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(5.5f);
         _caption?.Show("Ahh shoot... the elevator isn't working. I need to fix the circuit to make it functional.", 5f);
         yield return new WaitForSeconds(6f);
         _caption?.Show("Click the fuse box to begin.", 3f);
     }
 
-    // Called by FuseBoxInteractable when the player clicks the fuse box
+    // Called when player interacts with the wire panel box (FuseBox)
     public void StartGame()
     {
         if (_gameStarted) return;
@@ -106,6 +105,7 @@ public class SimonSaysGame : MonoBehaviour
         StartCoroutine(StartRoundAfterDelay(1.5f));
     }
 
+    // Round logic 
     IEnumerator StartRoundAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -121,11 +121,11 @@ public class SimonSaysGame : MonoBehaviour
             return;
         }
 
-        _inputIndex     = 0;
+        _inputIndex    = 0;
         _playerCanInput = false;
-        _attemptsLeft   = maxAttempts;
+        _attemptsLeft  = maxAttempts;
 
-        // Sequence gets one wire longer each round
+        // Build sequence - add one new random wire each round
         int seqLength = startingLength + (_currentRound - 1);
         _sequence.Clear();
         for (int i = 0; i < seqLength; i++)
@@ -137,7 +137,6 @@ public class SimonSaysGame : MonoBehaviour
         StartCoroutine(ShowSequence());
     }
 
-    // Flashes each wire in the sequence so the player can memorize it
     IEnumerator ShowSequence()
     {
         yield return new WaitForSeconds(1.8f);
@@ -158,14 +157,14 @@ public class SimonSaysGame : MonoBehaviour
         _playerCanInput = true;
     }
 
-    // Called by WireButton when the player clicks a wire
+    // Player presses a wire
     public void OnWirePressed(int wireIndex)
     {
         if (!_playerCanInput || _gameComplete) return;
 
         if (wireIndex == _sequence[_inputIndex])
         {
-            // Correct wire pressed
+            // Correct
             if (_wires[wireIndex] != null) _wires[wireIndex].FlashGlow(0.25f);
             if (correctSound != null) _audio.PlayOneShot(correctSound);
             _inputIndex++;
@@ -173,7 +172,7 @@ public class SimonSaysGame : MonoBehaviour
 
             if (_inputIndex >= _sequence.Count)
             {
-                // Finished the full sequence for this round
+                // Round complete
                 _playerCanInput = false;
                 _caption?.Show($"Round {_currentRound} complete!", 1.5f);
                 StartCoroutine(NextRoundDelay());
@@ -181,21 +180,19 @@ public class SimonSaysGame : MonoBehaviour
         }
         else
         {
-            // Wrong wire pressed
+            // Wrong
             if (_wires[wireIndex] != null) _wires[wireIndex].FlashError(0.4f);
             if (wrongSound != null) _audio.PlayOneShot(wrongSound);
             _attemptsLeft--;
 
             if (_attemptsLeft <= 0)
             {
-                // Out of attempts - restart the whole level
                 _playerCanInput = false;
                 _caption?.Show("Circuit overloaded! Restarting sequence...", 2f);
                 StartCoroutine(RestartRound());
             }
             else
             {
-                // Still have attempts left - replay the sequence so they can try again
                 _inputIndex = 0;
                 SetHint($"WRONG! Starting over - ATTEMPTS: {_attemptsLeft}");
                 StartCoroutine(ReplayAfterError());
@@ -209,30 +206,33 @@ public class SimonSaysGame : MonoBehaviour
         StartNextRound();
     }
 
-    // No attempts left - fade to black and show the fail screen
     IEnumerator RestartRound()
     {
+        // Out of attempts - fade to black and show fail screen
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(FadeToBlack());
 
-        _failGroup.alpha = 1f;
-        _failText.text   = "Circuit overloaded...\n<size=24>Press Spacebar to Restart</size>";
+        // Show fail message
+        _failGroup.alpha  = 1f;
+        _failText.text = "Circuit overloaded...\n<size=24>Press Spacebar to Restart</size>";
 
+        // Wait for spacebar
         while (!Input.GetKeyDown(KeyCode.Space))
             yield return null;
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
 
-    // Wrong press - show the sequence again before the player retries
     IEnumerator ReplayAfterError()
     {
         _playerCanInput = false;
         yield return new WaitForSeconds(1f);
+        // Replay the sequence again so player can re-memorize
         StartCoroutine(ShowSequence());
     }
 
-    // All 3 rounds done - circuit is fixed
+    // All rounds complete
     void OnAllRoundsComplete()
     {
         _gameComplete = true;
@@ -240,18 +240,19 @@ public class SimonSaysGame : MonoBehaviour
         _caption?.Show("Circuit restored! The elevator is operational.", 3f);
         SetHint("CIRCUIT RESTORED");
 
-        // Make the key active but invisible - player just needs to press Button_Close
+        // Spawn key invisible (player just needs to press Button_Close)
         if (keyObject != null)
         {
             keyObject.SetActive(true);
+            // Make all renderers invisible
             foreach (var r in keyObject.GetComponentsInChildren<Renderer>())
                 r.enabled = false;
         }
 
-        Debug.Log("All rounds complete - press Button_Close to leave.");
+        Debug.Log("[SimonSays] All rounds complete - press Button_Close to proceed.");
     }
 
-    // Button_Close was pressed - fade out and finish the level
+    // Button_Close pressed -> fade to black
     void OnLevelComplete()
     {
         if (!_gameComplete) return;
@@ -261,8 +262,8 @@ public class SimonSaysGame : MonoBehaviour
     IEnumerator FadeOutSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("Floor 3 complete - ready for the next scene.");
-        // TODO: SceneManager.LoadScene("Floor_6");
+        Debug.Log("[SimonSays] Level complete - ready for next scene.");
+        SceneManager.LoadScene("Floor 6");
     }
 
     IEnumerator FadeToBlack()
@@ -278,12 +279,12 @@ public class SimonSaysGame : MonoBehaviour
         }
     }
 
+    // UI
     void SetHint(string text)
     {
         if (_hintText != null) _hintText.text = text;
     }
 
-    // Builds all the UI elements in code - no manual Canvas setup needed
     void BuildUI()
     {
         Texture2D tex = new Texture2D(1, 1);
@@ -291,9 +292,10 @@ public class SimonSaysGame : MonoBehaviour
         tex.Apply();
         Sprite white = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
 
+        // Build a CaptionUI3 in code
         _caption = gameObject.AddComponent<CaptionUI3>();
 
-        // Main canvas for this floor's UI
+        // Canvas
         GameObject cGO = new GameObject("Floor3UICanvas");
         Canvas canvas  = cGO.AddComponent<Canvas>();
         canvas.renderMode   = RenderMode.ScreenSpaceOverlay;
@@ -303,7 +305,7 @@ public class SimonSaysGame : MonoBehaviour
         scaler.referenceResolution = new Vector2(1920, 1080);
         cGO.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
-        // Fullscreen black overlay for fading
+        // Fade overlay
         GameObject fadeGO  = new GameObject("FadeOverlay");
         fadeGO.transform.SetParent(cGO.transform, false);
         _fadeOverlay               = fadeGO.AddComponent<Image>();
@@ -314,15 +316,15 @@ public class SimonSaysGame : MonoBehaviour
         frt.anchorMin = Vector2.zero; frt.anchorMax = Vector2.one;
         frt.offsetMin = Vector2.zero; frt.offsetMax = Vector2.zero;
 
-        // Status text at the top of the screen showing round and input progress
+        // Hint text - top of screen
         GameObject hGO = new GameObject("HintText");
         hGO.transform.SetParent(cGO.transform, false);
-        _hintText               = hGO.AddComponent<TextMeshProUGUI>();
-        _hintText.fontSize      = 24;
-        _hintText.color         = new Color(0.2f, 1f, 0.4f);  // green like a terminal
-        _hintText.alignment     = TextAlignmentOptions.Center;
-        _hintText.fontStyle     = FontStyles.Bold;
-        _hintText.text          = "";
+        _hintText           = hGO.AddComponent<TextMeshProUGUI>();
+        _hintText.fontSize  = 24;
+        _hintText.color     = new Color(0.2f, 1f, 0.4f);   // green terminal colour
+        _hintText.alignment = TextAlignmentOptions.Center;
+        _hintText.fontStyle = FontStyles.Bold;
+        _hintText.text      = "";
         _hintText.raycastTarget = false;
         var hrt = hGO.GetComponent<RectTransform>();
         hrt.anchorMin = new Vector2(0f, 0.88f);
@@ -330,7 +332,7 @@ public class SimonSaysGame : MonoBehaviour
         hrt.offsetMin = Vector2.zero;
         hrt.offsetMax = Vector2.zero;
 
-        // Fail panel - hidden until the player runs out of attempts
+        // Fail panel
         GameObject failGO    = new GameObject("FailPanel");
         failGO.transform.SetParent(cGO.transform, false);
         Image failBg         = failGO.AddComponent<Image>();
@@ -344,15 +346,14 @@ public class SimonSaysGame : MonoBehaviour
         frt2.anchorMin = Vector2.zero; frt2.anchorMax = Vector2.one;
         frt2.offsetMin = Vector2.zero; frt2.offsetMax = Vector2.zero;
 
-        // The actual fail message text
         GameObject ftGO  = new GameObject("FailText");
         ftGO.transform.SetParent(failGO.transform, false);
-        _failText               = ftGO.AddComponent<TextMeshProUGUI>();
-        _failText.fontSize      = 52;
-        _failText.color         = new Color(0.9f, 0.2f, 0.2f);
-        _failText.alignment     = TextAlignmentOptions.Center;
-        _failText.fontStyle     = FontStyles.Bold;
-        _failText.text          = "";
+        _failText            = ftGO.AddComponent<TextMeshProUGUI>();
+        _failText.fontSize   = 52;
+        _failText.color      = new Color(0.9f, 0.2f, 0.2f);
+        _failText.alignment  = TextAlignmentOptions.Center;
+        _failText.fontStyle  = FontStyles.Bold;
+        _failText.text       = "";
         _failText.raycastTarget = false;
         var ftrt = ftGO.GetComponent<RectTransform>();
         ftrt.anchorMin = Vector2.zero; ftrt.anchorMax = Vector2.one;

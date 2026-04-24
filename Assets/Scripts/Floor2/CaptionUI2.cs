@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Same as CaptionUI but for Floor 2 — kept separate so each floor
+// Same as CaptionUI but for Floor 2 - kept separate so each floor
 // has its own canvas and they don't interfere with each other.
 public class CaptionUI2 : MonoBehaviour
 {

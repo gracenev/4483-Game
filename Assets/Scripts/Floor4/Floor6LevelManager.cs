@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-// Manages Floor 6 — handles the elevator exit and the void fall fail state.
+// Manages Floor 6 - handles the elevator exit and the void fall fail state.
 public class Floor6LevelManager : MonoBehaviour
 {
     [Header("Buttons")]
@@ -57,7 +57,7 @@ public class Floor6LevelManager : MonoBehaviour
     // Opening captions when the scene loads
     IEnumerator OpeningSequence()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(5.5f);
         _caption?.Show("Oh no... there's fire everywhere! The whole floor's destroyed, I need to get to the elevator!", 5f);
     }
 
@@ -99,7 +99,7 @@ public class Floor6LevelManager : MonoBehaviour
             closeButton.OnPressedCallback -= OnLevelComplete;
     }
 
-    // Button_Close pressed — level complete
+    // Button_Close pressed - level complete
     void OnLevelComplete()
     {
         if (_levelEnded) return;
@@ -110,8 +110,8 @@ public class Floor6LevelManager : MonoBehaviour
     IEnumerator LevelCompleteSequence()
     {
         yield return StartCoroutine(FadeToBlack());
-        Debug.Log("Floor 6 complete — loading next scene.");
-        // TODO: SceneManager.LoadScene("NextFloor");
+        Debug.Log("Floor 6 complete - loading next scene.");
+        SceneManager.LoadScene("Floor 5");
     }
 
     // Player fell into the void
@@ -174,7 +174,7 @@ public class Floor6LevelManager : MonoBehaviour
         frt.anchorMin = Vector2.zero; frt.anchorMax = Vector2.one;
         frt.offsetMin = Vector2.zero; frt.offsetMax = Vector2.zero;
 
-        // Fail panel — hidden until player falls
+        // Fail panel - hidden until player falls
         GameObject failGO  = new GameObject("FailPanel");
         failGO.transform.SetParent(cGO.transform, false);
         Image failBg       = failGO.AddComponent<Image>();

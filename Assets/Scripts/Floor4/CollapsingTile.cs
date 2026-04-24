@@ -71,7 +71,7 @@ public class CollapsingTile : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        // Fall away — accelerates as it drops
+        // Fall away - accelerates as it drops
         float fallTimer = 0f;
         Vector3 fallStart = transform.position;
         while (fallTimer < collapseDelay)

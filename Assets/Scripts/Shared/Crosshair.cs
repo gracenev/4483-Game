@@ -1,48 +1,76 @@
 using UnityEngine;
 
-// Draws a small dot in the centre of the screen as a crosshair.
-// Gets bigger when the player is looking at something they can interact with.
+// Draws a crosshair dot in the centre of the screen.
+// When hovering over something interactable it switches to a larger
+// outlined square with no fill so the player knows they can click.
 public class Crosshair : MonoBehaviour
 {
-    public float dotSize      = 4f;   // normal crosshair size
-    public float hoverDotSize = 10f;  // size when hovering over something interactable
+    public float dotSize       = 6f;    // normal filled dot size
+    public float hoverSize     = 8f;   // outline box size when hovering
+    public float outlineThick  = 2f;    // thickness of the outline
     public float interactRange = 2f;
 
-    private Texture2D dotTexture;
-    private bool hovering = false;
+    private Texture2D _dotTexture;
+    private Texture2D _whiteTexture;
+    private bool      _hovering = false;
 
     void Start()
     {
-        // Create a plain white 1x1 texture to use as the dot
-        dotTexture = new Texture2D(1, 1);
-        dotTexture.SetPixel(0, 0, Color.white);
-        dotTexture.Apply();
+        _dotTexture = new Texture2D(1, 1);
+        _dotTexture.SetPixel(0, 0, Color.white);
+        _dotTexture.Apply();
+
+        _whiteTexture = new Texture2D(1, 1);
+        _whiteTexture.SetPixel(0, 0, Color.white);
+        _whiteTexture.Apply();
     }
 
     void Update()
     {
-        // Cast a ray forward from the camera to check what the player is looking at
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, interactRange))
         {
-            // Grow the dot if it's a button or a key
-            hovering = hit.collider.GetComponent<InteractableButton>() != null
-                    || hit.collider.GetComponent<PickupKey>() != null;
+            _hovering = hit.collider.GetComponent<InteractableButton>()  != null
+                     || hit.collider.GetComponent<PickupKey>()           != null
+                     || hit.collider.GetComponent<WireButton>()          != null
+                     || hit.collider.GetComponent<FuseBoxInteractable>() != null
+                     || hit.collider.GetComponent<BreakerSwitch>()       != null;
         }
         else
         {
-            hovering = false;
+            _hovering = false;
         }
     }
 
     void OnGUI()
     {
-        // Draw the dot centred on the screen
-        float size = hovering ? hoverDotSize : dotSize;
-        float x    = Screen.width  / 2f - size / 2f;
-        float y    = Screen.height / 2f - size / 2f;
-        GUI.DrawTexture(new Rect(x, y, size, size), dotTexture);
+        float cx = Screen.width  * 0.5f;
+        float cy = Screen.height * 0.5f;
+
+        if (!_hovering)
+        {
+            // Normal small filled dot
+            float half = dotSize * 0.5f;
+            GUI.DrawTexture(new Rect(cx - half, cy - half, dotSize, dotSize), _dotTexture);
+        }
+        else
+        {
+            // Outlined square - draw 4 thin border rects, no fill
+            float s  = hoverSize;
+            float t  = outlineThick;
+            float x  = cx - s * 0.5f;
+            float y  = cy - s * 0.5f;
+
+            // Top edge
+            GUI.DrawTexture(new Rect(x,         y,         s, t), _whiteTexture);
+            // Bottom edge
+            GUI.DrawTexture(new Rect(x,         y + s - t, s, t), _whiteTexture);
+            // Left edge
+            GUI.DrawTexture(new Rect(x,         y,         t, s), _whiteTexture);
+            // Right edge
+            GUI.DrawTexture(new Rect(x + s - t, y,         t, s), _whiteTexture);
+        }
     }
 }

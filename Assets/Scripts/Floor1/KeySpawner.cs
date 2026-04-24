@@ -10,7 +10,7 @@ public class KeySpawner : MonoBehaviour
     [Tooltip("How high off the floor the key should float")]
     public float spawnHeight = 1.19f;
 
-    // I'm skipping the first two rooms intentionally — want the player to have to walk a bit
+    // I'm skipping the first two rooms intentionally - want the player to have to walk a bit
     private static readonly Vector3[] RoomCentres = new Vector3[]
     {
         new Vector3(-11f, 0f, 42.5f),      // Room_Left_2

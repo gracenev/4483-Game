@@ -73,10 +73,10 @@ public class Floor2LevelManager : MonoBehaviour
         _lastState = current;
     }
 
-    // Shows the opening caption when the level starts
+    // Shows the opening caption after the floor title card fades
     IEnumerator OpeningSequence()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(5.5f);
         captionUI?.Show(
             "Security cameras are sweeping the hall. " +
             "If they catch me moving, this whole floor goes into lockdown. " +

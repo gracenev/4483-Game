@@ -22,7 +22,7 @@ public class RedLightEffect : MonoBehaviour
         if (_sync == null)
             Debug.LogWarning("RedLightEffect couldn't find CameraSync in the scene.");
 
-        // Grab every Point Light in the scene — these are the LED ceiling panels
+        // Grab every Point Light in the scene - these are the LED ceiling panels
         var lights = new List<Light>();
         foreach (Light lt in FindObjectsByType<Light>(FindObjectsSortMode.None))
             if (lt.type == LightType.Point)
@@ -36,7 +36,7 @@ public class RedLightEffect : MonoBehaviour
     {
         if (_sync == null) return;
 
-        // Turn red as soon as the cameras start turning — not just when fully facing
+        // Turn red as soon as the cameras start turning - not just when fully facing
         bool isRed = _sync.State == CameraSync.CamState.FacingPlayer ||
                      _sync.State == CameraSync.CamState.TurningToPlayer;
 

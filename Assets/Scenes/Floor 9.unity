@@ -13467,8 +13467,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: affeb3fef230cbe4b928b5655b3d7d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorTitle
-  floorName: Floor 9
-  holdDuration: 1.5
+  displayFloorNumber: Floor 6
+  floorName: Smoke & Evacuation
+  floorDescription: Find the elevator key and escape before the smoke overwhelms
+    you.
+  holdDuration: 5.5
   fadeDuration: 0.8
 --- !u!1 &801429949
 GameObject:
@@ -32110,7 +32113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotSize: 4
-  hoverDotSize: 7
+  hoverSize: 8
+  outlineThick: 2
   interactRange: 2
 --- !u!114 &1731228594
 MonoBehaviour:

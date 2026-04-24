@@ -997,7 +997,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotSize: 4
-  hoverDotSize: 7
+  hoverSize: 8
+  outlineThick: 2
   interactRange: 2
 --- !u!114 &587205585
 MonoBehaviour:
@@ -3374,8 +3375,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: affeb3fef230cbe4b928b5655b3d7d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorTitle
-  floorName: Floor 7
-  holdDuration: 1.5
+  displayFloorNumber: Floor 4
+  floorName: Circuit Recovery
+  floorDescription: The elevator is malfunctioning. Restore the wiring sequence to
+    continue.
+  holdDuration: 5.5
   fadeDuration: 0.8
 --- !u!1 &1336871227
 GameObject:

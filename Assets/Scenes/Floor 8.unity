@@ -10958,7 +10958,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7ad6f6046a771464eab88e0157decae3, type: 2}
+  - {fileID: 2100000, guid: 474b2ad0567874f48b47f68034db7ded, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36191,7 +36191,7 @@ MonoBehaviour:
   playerObject: {fileID: 1179757041}
   levelManager: {fileID: 2125246831}
   movementThreshold: 0.3
-  gracePeriod: 1
+  gracePeriod: 0.7
 --- !u!1 &1573159265
 GameObject:
   m_ObjectHideFlags: 0
@@ -40389,7 +40389,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotSize: 4
-  hoverDotSize: 7
+  hoverSize: 8
+  outlineThick: 2
   interactRange: 2
 --- !u!114 &1742573373
 MonoBehaviour:
@@ -48289,8 +48290,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: affeb3fef230cbe4b928b5655b3d7d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorTitle
-  floorName: Floor 8
-  holdDuration: 1.5
+  displayFloorNumber: Floor 5
+  floorName: Under Surveillance
+  floorDescription: Security cameras are active. Don't move when they're watching.
+  holdDuration: 5.5
   fadeDuration: 0.8
 --- !u!1 &2125723909
 GameObject:
